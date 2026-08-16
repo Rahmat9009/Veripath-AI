@@ -1,0 +1,614 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   VeriPath design tokens — "Case File"
+   Ink on paper. Colour carries meaning, never decoration.
+   Brand colours are taken from the approved logo and are never altered:
+     navy  #153C6D
+     green #00C853
+   ========================================================================== */
+
+@theme {
+  /* --- Typefaces ------------------------------------------------------- */
+  --font-sans: "Public Sans", "Noto Sans Bengali", system-ui, -apple-system, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* --- Ground and ink -------------------------------------------------- */
+  --color-paper: #f6f6f3;
+  --color-surface: #ffffff;
+  --color-ink: #14202b;
+  --color-ink-muted: #4a5a67;
+  --color-ink-faint: #64727e;
+  --color-rule: #dde1dc;
+  --color-rule-strong: #b9c0bb;
+
+  /* The relief tone. Sits between paper and surface so three consecutive
+     bands can differ without any of them becoming a coloured panel. */
+  --color-vellum: #edece6;
+
+  /* --- Brand (from the approved logo) ---------------------------------- */
+  --color-navy: #153c6d;
+  --color-navy-deep: #0e2a4d;
+  --color-navy-ink: #0b2039;
+  --color-navy-tint: #eaeff6;
+  --color-brand-green: #00c853;
+
+  /* One step up from navy: structure that must read *on* a navy ground,
+     where --color-navy itself disappears. */
+  --color-navy-lift: #1d4d86;
+
+  /* Atmosphere only. This is a gradient stop for the light behind the hero
+     object and nothing else — it never fills a shape and never carries text,
+     because at 3.1:1 on navy-ink it could not. */
+  --color-signal-cyan: #4fc3e8;
+
+  /* The logo green measures 1.9:1 on cream, so it can never carry text.
+     This is the same hue at a contrast that passes AA on paper. */
+  --color-brand-green-deep: #059f45;
+
+  /* --- Status: the only semantic colours ------------------------------- */
+  --color-verified: #0a7a3d;
+  --color-verified-surface: #e8f5ec;
+  --color-caution: #8a5a00;
+  --color-caution-surface: #fbf2df;
+  --color-alert: #a3231c;
+  --color-alert-surface: #fbeceb;
+  --color-unknown: #55616c;
+  --color-unknown-surface: #eef0f1;
+
+  /* The same three meanings, at values that read on the navy ground of the
+     hero. The ink-side tokens above are far too dark there. Used only for
+     marks and rules — the words themselves always sit on a light pill. */
+  --color-alert-on-dark: #e8837a;
+  --color-caution-on-dark: #dfab55;
+  --color-unknown-on-dark: #93a2af;
+
+  /* --- Type scale ------------------------------------------------------ */
+  /* Landing-page sizes. Added rather than folded into display-l/display-m,
+     which the five inner pages are set in and must keep. */
+  /* The hero headline, and nothing else. Capped at 5.5rem rather than pushed
+     further: the word column is six of twelve tracks, and "Verify Before" set
+     in Source Serif at 6rem overruns that column between 1280 and 1536. */
+  --text-hero: clamp(3rem, 6.2vw, 5.5rem);
+  --text-hero--line-height: 0.98;
+  --text-hero--letter-spacing: -0.03em;
+
+  --text-display-xl: clamp(2.5rem, 5vw, 5.25rem);
+  --text-display-xl--line-height: 1.02;
+  --text-display-xl--letter-spacing: -0.022em;
+  --text-section: clamp(1.9rem, 3.2vw, 2.75rem);
+  --text-section--line-height: 1.1;
+  --text-section--letter-spacing: -0.016em;
+  --text-lead: clamp(1.0625rem, 1.35vw, 1.25rem);
+  --text-lead--line-height: 1.55;
+
+  --text-display-l: 2.125rem;
+  --text-display-l--line-height: 1.15;
+  --text-display-m: 1.6875rem;
+  --text-display-m--line-height: 1.2;
+  --text-title: 1.3125rem;
+  --text-title--line-height: 1.3;
+  --text-body-l: 1.0625rem;
+  --text-body-l--line-height: 1.6;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.6;
+  --text-body-s: 0.84375rem;
+  --text-body-s--line-height: 1.5;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.1;
+  --text-data: 0.875rem;
+  --text-data--line-height: 1.4;
+
+  /* --- Radius: structural edges stay sharp ----------------------------- */
+  --radius-control: 2px;
+  --radius-record: 3px;
+
+  /* --- Elevation: one token, floating layers only ---------------------- */
+  --shadow-float: 0 4px 16px rgba(20, 32, 43, 0.14);
+  /* Reserved for the floating verification cards, the only elements on the
+     page meant to sit above their ground. */
+  --shadow-lift: 0 24px 60px -24px rgba(6, 18, 33, 0.55);
+  /* Grounds the hero object against its own light, so it reads as standing on
+     the stage rather than pasted onto it. */
+  --shadow-halo: 0 34px 50px rgba(4, 14, 28, 0.55);
+
+  /* --- Motion: two curves, used everywhere ----------------------------- */
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-state: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Bengali needs slightly more size and leading for conjunct legibility.
+   Applied once at the root: an em-based rule on :lang(bn) matches every
+   element, so the multiplier compounded at each nesting level and deeply
+   nested Bengali text rendered more than twice its intended size. */
+html[lang='bn'] {
+  font-size: 105%;
+}
+
+html[lang='bn'] body {
+  line-height: 1.75;
+}
+
+/* Source Serif 4 carries no Bengali, so a Bengali headline would otherwise
+   fall through to whatever the system offered. Set it deliberately instead:
+   Noto Sans Bengali at 600, with the tight display tracking removed —
+   negative tracking collides the conjuncts. */
+html[lang='bn'] .font-serif {
+  font-family: "Noto Sans Bengali", var(--font-sans);
+  font-weight: 600;
+  letter-spacing: normal;
+}
+
+/* IBM Plex Mono carries no Bengali, so every mono label — the small uppercase
+   strips that name sections, statuses and sources — falls through to Noto Sans
+   Bengali. Those labels are set with 0.06–0.14em tracking, which in Bengali
+   pulls apart conjuncts that have to stay joined. Removed for Bengali only.
+   Unlayered, like the rules around it, so it outranks the `tracking-*`
+   utilities regardless of specificity. Latin digits in `.tabular` columns are
+   unaffected — they carry no tracking of their own. */
+html[lang='bn'] .font-mono {
+  letter-spacing: normal;
+}
+
+/* Bengali display lines need more room between them than Latin does. */
+html[lang='bn'] h1.font-serif,
+html[lang='bn'] h2.font-serif {
+  line-height: 1.35;
+}
+
+/* The hero headline needs its own Bengali treatment rather than inheriting the
+   rule above. At 5.5rem the Latin tracking of -0.03em collides the conjuncts,
+   and the Bengali headline is three words longer than the English one, so it
+   is set smaller as well as looser. Unlayered, like the rules above it, so it
+   outranks the `text-hero` utility regardless of specificity. */
+html[lang='bn'] .text-hero {
+  font-size: clamp(2.25rem, 4.6vw, 4rem);
+  line-height: 1.24;
+  letter-spacing: normal;
+}
+
+/* Numbers that sit in columns must align. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* The header's own height, stated once.
+   The scroll story pins its stage directly beneath the header, so this is
+   geometry two separate systems have to agree on: if they disagree the stage
+   either hides under the header or leaves a strip of the page showing above
+   it. Kept in step with the `min-h` on the header in Navbar.tsx. */
+:root {
+  --nav-h: 4.25rem;
+  /* The base unit of the scroll track: what one scene of weight 1 is worth.
+     Not a spacer — the track's height is this multiplied by the sum of the
+     scenes' authored weights, so the page is exactly as long as the story is,
+     and a scene's share of it is an editorial decision rather than a layout
+     accident. Comfortably under a viewport, which reads as a firm hand-over
+     between scenes rather than a wait for the next one. */
+  --scene-scroll: 72svh;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --nav-h: 4.75rem;
+  }
+}
+
+/* Visible, consistent keyboard focus everywhere. */
+:focus-visible {
+  outline: 2px solid var(--color-navy);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+/* The same ring, for controls that sit on a navy ground.
+   This has to be stated here rather than as a `focus-visible:outline-white`
+   utility on the element. The rule above is unlayered and Tailwind's
+   utilities live in `@layer utilities`; an unlayered declaration outranks any
+   layered one whatever its specificity, so the utility never reached the
+   outline and every control on navy rang navy on navy — a focus indicator
+   that was, in practice, invisible. Written unlayered, like the rule it
+   overrides, so it can actually win.
+
+   Colour and offset only. The radius above is deliberately left alone, so
+   nothing about a control's resting appearance changes anywhere. */
+.focus-ring-inverse:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* ==========================================================================
+   Accessibility modes — applied to <html>, so they reach the whole app
+   ========================================================================== */
+
+html[data-textsize="large"] {
+  font-size: 112.5%;
+}
+
+html[lang='bn'][data-textsize='large'] {
+  font-size: 118%;
+}
+
+html[data-contrast="high"] {
+  --color-paper: #ffffff;
+  --color-ink: #000000;
+  --color-ink-muted: #1f2b36;
+  --color-ink-faint: #33414d;
+  --color-rule: #7d8a93;
+  --color-rule-strong: #4a5a67;
+  --color-verified: #05602e;
+  --color-caution: #6b4600;
+  --color-alert: #8a1712;
+  --color-unknown: #3b454e;
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+@layer utilities {
+  /* The signature device for "we could not verify this". Diagonal hairline
+     hatch reads as unknown without relying on colour alone. */
+  .hatch {
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 5px,
+      color-mix(in srgb, currentColor 14%, transparent) 5px,
+      color-mix(in srgb, currentColor 14%, transparent) 6px
+    );
+  }
+
+  /* The hairline field on navy grounds. Structure, not texture: the column
+     rhythm is the five-bar rhythm of the mark, so the grid the page is built
+     on is the same grid the logo is built on. */
+  .gate-field {
+    background-image: linear-gradient(
+      to right,
+      color-mix(in srgb, #ffffff 5%, transparent) 1px,
+      transparent 1px
+    );
+    background-size: 20% 100%;
+  }
+
+  /* The About masthead's ground: a two-scale ledger grid, major and minor,
+     drawn from one custom property. Technique adapted from a Uiverse pattern
+     (csemszepp / serious-cobra-89) — nothing of its colour survives.
+
+     Both layers are navy at single-digit percentages, and the whole field is
+     masked away before it reaches the reading column, so it is read as the
+     ruled paper the page is set on rather than as a graphic. Suppressed
+     entirely in high-contrast mode, where the ground must be flat. */
+  .ledger-grid {
+    --ledger-size: 96px;
+    --ledger-ink: color-mix(in srgb, var(--color-navy) 7%, transparent);
+    --ledger-ink-minor: color-mix(in srgb, var(--color-navy) 3.5%, transparent);
+    background-image:
+      conic-gradient(from 90deg at 1px 1px, #0000 90deg, var(--ledger-ink) 0),
+      conic-gradient(from 90deg at 1px 1px, #0000 90deg, var(--ledger-ink-minor) 0);
+    background-size:
+      var(--ledger-size) var(--ledger-size),
+      calc(var(--ledger-size) / 4) calc(var(--ledger-size) / 4);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 72%);
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 72%);
+  }
+
+  html[data-contrast='high'] .ledger-grid {
+    background-image: none;
+  }
+
+  /* The dotted rule between the four steps of the evidence chain. A survey
+     line, not a progress bar: it does not fill, and it carries no state. */
+  .chain-link {
+    background-image: repeating-linear-gradient(
+      to right,
+      color-mix(in srgb, #ffffff 45%, transparent) 0 2px,
+      transparent 2px 8px
+    );
+  }
+
+  /* The chamber's five uprights. Height lives here, not in the animation, so
+     the gate stands even if motion never runs. */
+  .upright {
+    height: calc(var(--upright-max, 64px) * var(--upright-scale, 1));
+  }
+
+  @media (min-width: 1024px) {
+    .upright {
+      --upright-max: 76px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .upright {
+      --upright-max: 88px;
+    }
+  }
+
+  /* One container for header, main and footer, so they can never drift apart.
+     Wider than the previous 1200px cap, which left ~293px unused on each side
+     of an 1800px viewport. */
+  .shell {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1560px;
+    padding-inline: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .shell { padding-inline: 1.5rem; }
+  }
+
+  @media (min-width: 1024px) {
+    .shell { padding-inline: 2rem; }
+  }
+
+  @media (min-width: 1280px) {
+    .shell { padding-inline: 3rem; }
+  }
+
+  @media (min-width: 1536px) {
+    .shell { padding-inline: 4rem; }
+  }
+
+  /* The hero's container, and only the hero's.
+     `shell` caps at 1560px and then adds up to 4rem of its own padding, which
+     on a 1920px display leaves 244px of dead margin on each side and on a
+     2560px display 564px. That is right for reading columns and wrong for a
+     stage. This one keeps growing, and its padding scales with the viewport
+     instead of stepping. Content sections keep `shell`. */
+  .stage {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1920px;
+    padding-inline: clamp(1rem, 5vw, 7rem);
+  }
+
+  /* The single gradient on the page. Three stops layered back to front: a
+     broad navy lift, a cool bloom where the object's own light is brightest,
+     and a low green wash at the pedestal answering the base's lit ring.
+     Scoped to the hero — nothing else on the site carries a gradient. */
+  .hero-bloom {
+    background-image:
+      radial-gradient(
+        38% 28% at 50% 78%,
+        color-mix(in srgb, var(--color-brand-green) 24%, transparent) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        46% 38% at 50% 42%,
+        color-mix(in srgb, var(--color-signal-cyan) 38%, transparent) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        70% 62% at 50% 50%,
+        color-mix(in srgb, var(--color-navy-lift) 92%, transparent) 0%,
+        transparent 74%
+      );
+  }
+
+  /* The hero's entrance light — a horizon developing behind the reading
+     column, once, on arrival.
+     Built from the same three tokens as the bloom above so the stage has one
+     palette rather than two: a broad navy lift carrying the shape, a cool
+     band where the horizon line falls, a white highlight at its brightest
+     point, and the faintest green at the far edge answering the pedestal.
+     Every stop is deliberately weak. The headline is white on navy-ink and
+     must stay that way, so this lifts the ground by a few percent — it is
+     read as depth behind the type, never as a light across it. */
+  .hero-horizon {
+    background-image:
+      radial-gradient(
+        58% 20% at 26% 92%,
+        color-mix(in srgb, #ffffff 9%, transparent) 0%,
+        transparent 66%
+      ),
+      radial-gradient(
+        78% 34% at 30% 98%,
+        color-mix(in srgb, var(--color-signal-cyan) 15%, transparent) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        50% 22% at 62% 104%,
+        color-mix(in srgb, var(--color-brand-green) 7%, transparent) 0%,
+        transparent 72%
+      ),
+      radial-gradient(
+        104% 66% at 28% 106%,
+        color-mix(in srgb, var(--color-navy-lift) 58%, transparent) 0%,
+        transparent 74%
+      );
+  }
+
+  /* Casts the object onto its own ground. A filter rather than a box-shadow so
+     it follows the artwork's alpha edge instead of its bounding box. */
+  .hero-object {
+    filter: drop-shadow(var(--shadow-halo));
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Scroll reveals                                                      */
+  /*                                                                     */
+  /* The hidden state is the exception, applied only while an element is */
+  /* waiting to be revealed. Anything that never receives a state — a    */
+  /* server render, a failed script, an element the observer missed —    */
+  /* is fully visible, because that is the default.                      */
+  /* ------------------------------------------------------------------ */
+
+  [data-reveal='hidden'] {
+    opacity: 0;
+  }
+
+  [data-reveal='hidden'][data-reveal-from='up'] {
+    transform: translateY(12px);
+  }
+
+  [data-reveal='shown'] {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 620ms var(--ease-entrance) var(--reveal-delay, 0s),
+      transform 620ms var(--ease-entrance) var(--reveal-delay, 0s);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Scene layers                                                        */
+  /*                                                                     */
+  /* The two or three beats within a scene — a heading, the panel it     */
+  /* describes, the evidence line beneath it — arriving in order once    */
+  /* the scene becomes the one being read.                               */
+  /*                                                                     */
+  /* Same contract as the scroll reveals above: the hidden state is the  */
+  /* exception, applied only to a scene explicitly marked inactive.      */
+  /* Anything that never receives a state is fully visible, so a layer   */
+  /* can never be left invisible by a scene that failed to report.       */
+  /* ------------------------------------------------------------------ */
+
+  [data-scene] [data-layer] {
+    transition:
+      opacity 520ms var(--ease-entrance) var(--layer-delay),
+      transform 520ms var(--ease-entrance) var(--layer-delay);
+    --layer-delay: calc(var(--layer, 0) * 90ms);
+  }
+
+  [data-scene='inactive'] [data-layer] {
+    opacity: 0;
+    transform: translateY(14px);
+    /* Leaving is not staggered. A scene that is on its way out should be
+       gone, not performing a second sequence on the way. */
+    --layer-delay: 0ms;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 0.5rem;
+    top: -4rem;
+    z-index: 100;
+    transition: top 120ms ease-out;
+  }
+
+  .skip-link:focus {
+    top: 0.5rem;
+  }
+
+  @keyframes vp-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .animate-fadeIn {
+    animation: vp-fade-in 180ms ease-out both;
+  }
+
+  .animate-scaleUp {
+    animation: vp-fade-in 180ms ease-out both;
+  }
+
+  /* Entrance animations run in CSS, not JS: if a script never executes the
+     element still ends up in its final, readable state, and the global
+     prefers-reduced-motion rule collapses the duration to nothing. */
+  @keyframes vp-line-rise {
+    from {
+      transform: translateY(110%);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  [data-anim='on'] .anim-line-rise {
+    animation: vp-line-rise 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes vp-fade-up {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  [data-anim='on'] .anim-fade-up {
+    animation: vp-fade-up 380ms ease-out both;
+  }
+
+  @keyframes vp-bar-rise {
+    from {
+      transform: scaleY(0.4);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  .anim-bar-rise {
+    transform-origin: bottom;
+  }
+
+  [data-anim='on'] .anim-bar-rise {
+    animation: vp-bar-rise 320ms ease-out both;
+  }
+
+  @keyframes vp-pulse {
+    50% {
+      opacity: 0.45;
+    }
+  }
+
+  .animate-loading {
+    animation: vp-pulse 1.4s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Collapsing the duration is not enough on its own: a reveal that has not
+     been triggered yet would still be sitting at opacity 0 waiting for an
+     observer. With reduced motion there is no reveal to wait for, so every
+     one of them is simply resolved. */
+  [data-reveal],
+  [data-scene] [data-layer] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

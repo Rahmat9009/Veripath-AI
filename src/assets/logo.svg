@@ -1,0 +1,28 @@
+<svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shield Icon Group -->
+  <g transform="translate(150, 40)">
+    <!-- Bar 1 (Far Left - Navy) -->
+    <path d="M 44 56 C 20 80 20 130 44 168 C 48 174 56 170 56 160 L 56 64 C 56 54 48 50 44 56 Z" fill="#153C6D" />
+    
+    <!-- Bar 2 (Inner Left - Green) -->
+    <rect x="66" y="36" width="22" height="160" rx="11" fill="#00C853" />
+    
+    <!-- Bar 3 (Center - Bright Green) -->
+    <rect x="94" y="12" width="22" height="216" rx="11" fill="#00C853" />
+    
+    <!-- Bar 4 (Inner Right - Navy) -->
+    <rect x="122" y="36" width="22" height="160" rx="11" fill="#153C6D" />
+    
+    <!-- Bar 5 (Far Right - Navy) -->
+    <path d="M 156 56 C 180 80 180 130 156 168 C 152 174 144 170 144 160 L 144 64 C 144 54 152 50 156 56 Z" fill="#153C6D" />
+  </g>
+
+  <!-- Typography -->
+  <text x="250" y="360" text-anchor="middle" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="900" font-size="52" letter-spacing="-1">
+    <tspan fill="#153C6D">VERIPATH</tspan> <tspan fill="#00C853">AI</tspan>
+  </text>
+  
+  <text x="250" y="405" text-anchor="middle" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="800" font-size="20" fill="#64748B" letter-spacing="6">
+    SECURE COMPLIANCE PLATFORM
+  </text>
+</svg>

@@ -1,0 +1,6 @@
+{
+  "name": "VeriPath-AI",
+  "description": "Evidence-backed AI verification platform for safe international migration, auditing job offers against fraud, pathway matching, and live regulatory updates.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
